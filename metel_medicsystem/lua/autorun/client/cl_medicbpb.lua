@@ -12,15 +12,14 @@ local BleedingEffects = {
 
 function UseBleedingEffects()
 	BleedingEffects[ "$pp_colour_addr" ] = math.abs(math.sin( CurTime() * 1.5 )) * 0.08
+	
 	DrawColorModify( BleedingEffects )
 end
 
-net.Receive("metelmedic_enablebleedingeffect", function()
-	hook.Add("RenderScreenspaceEffects", "MetelMedic_Effects", function()
-		UseBleedingEffects()
-	end)
-end)
-
-net.Receive("metelmedic_disablebleedingeffect", function()
-	hook.Remove("RenderScreenspaceEffects", "MetelMedic_Effects") 
+net.Receive("metelmedic_togglebleeding", function()
+	if net.ReadBool() then
+		hook.Add("RenderScreenspaceEffects", "MetelMedic_Effects", UseBleedingEffects)
+	else
+		hook.Remove("RenderScreenspaceEffects", "MetelMedic_Effects") 
+	end
 end)
