@@ -13,6 +13,9 @@ function ENT:Initialize()
 		phys:Wake()
 	end
 	self:SetUseType(3)
+    timer.Create("RemoveTimer_Entity_"..self:EntIndex(),300, 1, function()
+		self:Remove()
+    end)
 end
 
 function ENT:Use(activator, caller)
@@ -26,9 +29,11 @@ function ENT:Use(activator, caller)
         activator:SetRunSpeed(activator.runspeed)
         activator:SetNWBool("MetelMedic_HasCast", false)
         activator:SetNWBool("MetelMedic_Brokenleg", false)
-        //print("Fracture Healed")
     end)
 end
 
-function ENT:Touch(ent)
+function ENT:OnRemove()
+    if timer.Exists("RemoveTimer_Entity_"..self:EntIndex()) then
+        timer.Remove("RemoveTimer_Entity_"..self:EntIndex())
+    end
 end
