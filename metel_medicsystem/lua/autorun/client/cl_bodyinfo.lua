@@ -1,16 +1,11 @@
-net.Receive("metelmedic_openplayerinfo", function()
+net.Receive("metelmedic_openselfbody", function()
     metelmedicopenplayerinfo()
 end)
 
-surface.CreateFont("MetelMedicInfo", { font = "Roboto", size = 25, weight = 500 })
-surface.CreateFont("MetelMedicInfo2", { font = "Roboto", size = 22, weight = 500 })
-
-local lgrey = Color(70,70,70,255)
 local grey = Color(50,50,50,255)
 local white = Color(255,255,255,255)
-local red = Color(157,26,26)
+local red = Color(150, 20, 20, 255)
 local green = Color(50,250,50,255)
-local black = Color(35,35,35, 255)
 
 local scrh = ScrH()
 local function screencalc(size)
@@ -26,49 +21,48 @@ function metelmedicopenplayerinfo()
     medicinfomenu:Center()
 
     function medicinfomenu:Paint(w,h)
-        draw.RoundedBox(0,0,0,w,h, grey)
+        draw.RoundedBox(0, 0, 0, w, 24, Color(30, 30, 30, 255))
+        draw.RoundedBox(0, 0, 23, w, 1, green)
+        draw.RoundedBox(0, 0, 24, w, h - 24, Color(50, 50, 50, 240))
 
-        --Info Viereck
-        surface.SetDrawColor(lgrey)
-        surface.DrawRect(screencalc(20),screencalc(47), screencalc(180), screencalc(400))
+        -- Head
+        surface.SetDrawColor(green)
+        surface.DrawRect(150, 50, 100, 100)
 
-        surface.SetDrawColor(black)
-        surface.DrawOutlinedRect(screencalc(20),screencalc(47), screencalc(180), screencalc(400), screencalc(2))
+        -- Chest 
+        surface.SetDrawColor(green)
+        surface.DrawRect(139, 160, 120, 140)
 
-        draw.SimpleText( "Bloodamount: " .. tostring(ply:GetNWInt("MetelMedic_Blood", nil)) .. "%" , "MetelMedicInfo", w / 2, h - screencalc(45), color_white, 1 )
+        -- Stomach
+        surface.SetDrawColor(green)
+        surface.DrawRect(139, 305, 120, 50)
 
-        draw.SimpleText("Body Informations", "MetelMedicInfo2", 25, 50, white)
-        draw.SimpleText("―――――――――――", "MetelMedicInfo2", 22, 58, white)
-        draw.SimpleText("Legfracture: ", "MetelMedicInfo2", screencalc(75), screencalc(80), color_white, 1  )
-        draw.SimpleText("Bleeding: ", "MetelMedicInfo2", screencalc(65), screencalc(110), color_white, 1 )
+        -- Left Leg
+        surface.SetDrawColor(green)
+        surface.DrawRect(139, 360, 30, 100)
 
-        // Bein Bruch Ja/Nein
-        if(ply:GetNWBool("MetelMedic_Brokenleg") == true) then
-            draw.SimpleText("Yes", "MetelMedicInfo2", screencalc(130), screencalc(80), red, 1)
-        else
-            draw.SimpleText("No", "MetelMedicInfo2", screencalc(140), screencalc(80), green, 1)
-        end
+        -- Right Leg
+        surface.SetDrawColor(green)
+        surface.DrawRect(229, 360, 30, 100)
 
-        // Blutung ja/nein
-        if ply:GetNWString("MetelMedic_Bleeding", nil) == "none" then
-            draw.SimpleText("No", "MetelMedicInfo2", screencalc(115), screencalc(110), green, 1)
-        else
-            draw.SimpleText("Yes", "MetelMedicInfo2", screencalc(150), screencalc(110), red, 1)
-        end
+        -- Right Arm
+        surface.SetDrawColor(green)
+        surface.DrawRect(263, 160, 30, 170)
 
-        surface.SetDrawColor(lgrey)
-        surface.DrawRect(screencalc(230),screencalc(47), screencalc(150), screencalc(400), screencalc(40))
+        -- Left Arm
+        surface.SetDrawColor(green)
+        surface.DrawRect(105, 160, 30, 170)
 
         local currentblood = ply:GetNWInt("MetelMedic_Blood") 
         local ABlood = math.Clamp(currentblood,0,100)
-        local CBlood = ABlood / 100 * screencalc(399)
+        local CBlood = ABlood / 100 * 399
 
         surface.SetDrawColor(red)
-        surface.DrawRect(screencalc(230),screencalc(297) + (screencalc(150) - CBlood), screencalc(150), CBlood, screencalc(40))
+        surface.DrawRect(10, 465, 628 + (150 - CBlood), 26)
 
-        --Blut Viereck
-        surface.SetDrawColor(black)
-        surface.DrawOutlinedRect(screencalc(230),screencalc(47), screencalc(150), screencalc(400), screencalc(2))
-
+        surface.SetDrawColor(white)
+        surface.DrawOutlinedRect(10, 465, 380, 26, 1)
+        draw.SimpleText("Blood", "CloseCaption_Bold", 10, 440, white)
+        draw.SimpleText(tostring(ply:GetNWInt("MetelMedic_Blood", 6000)).." / 100%", "Trebuchet24", 200, 465, white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
     end
-end 
+end
