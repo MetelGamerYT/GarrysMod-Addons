@@ -1,7 +1,7 @@
 ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 
-ENT.PrintName = "Cast"
-ENT.Category = "MetelMedic"
+ENT.PrintName = "Plaster"
+ENT.Category = "MetelGaming Medic"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
