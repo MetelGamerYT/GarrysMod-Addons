@@ -1,0 +1,16 @@
+util.AddNetworkString("Metel_Armory_GiveWeapon")
+util.AddNetworkString("Metel_Armory_SpawnEnt")
+util.AddNetworkString("Metel_Armory_Show")
+util.AddNetworkString("Metel_Armory_RemoveWeapon")
+
+net.Receive("Metel_Armory_GiveWeapon", function()
+    local ply = net.ReadEntity()
+    local weapone = net.ReadString()
+    ply:Give(weapone)
+end)
+
+net.Receive("Metel_Armory_RemoveWeapon", function()
+    local ply = net.ReadEntity()
+    local weapone = net.ReadString()
+    ply:StripWeapon(weapone)
+end)
