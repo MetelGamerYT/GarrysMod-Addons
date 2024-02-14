@@ -1,10 +1,10 @@
 AddCSLuaFile()
 
-SWEP.Instructions = "LMB um andere zu Bandagieren / RMB zum selbst Bandagieren"
+SWEP.Instructions = "LMB to bandage others / RMB to bandage yourself"
 SWEP.UseHands = true
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
-SWEP.Category = "MetelGaming MedicSystem"
+SWEP.Category = "MetelGames MedicSystem"
 SWEP.Author = "DerMetelGamerYT & Gonzo"
 SWEP.ViewModelFOV = 50
 
@@ -13,8 +13,8 @@ if CLIENT then
 end
 
 SWEP.Primary.Ammo = "ammo_bandage"
-SWEP.Primary.ClipSize = -1
-SWEP.Primary.DefaultClip = 1
+SWEP.Primary.ClipSize = 3
+SWEP.Primary.DefaultClip = 3
 
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = 0
@@ -34,7 +34,7 @@ sound.Add( {
 	sound = "physics/flesh/flesh_scrape_rough_loop.wav"
 } )
 
-function SWEP:PrimaryAttack()
+function SWEP:SecondaryAttack()
 	
 	if !IsFirstTimePredicted() or self.Busy then return end
     if self.Owner:GetNWString("MetelMedic_Bleeding") == "none" then return end
@@ -43,16 +43,17 @@ function SWEP:PrimaryAttack()
 	self.Busy = true
 
 	timer.Simple(self:SequenceDuration() * 0.9, function()
-		if self.Owner:GetMaxHealth() >= self.Owner:Health() + 15 then
+		if self.Owner:Health() >= self.Owner:GetMaxHealth() + 10 then
 			self.Owner:SetHealth(self.Owner:GetMaxHealth())
 		else
-			self.Owner:SetHealth(self.Owner:Health() + 15)
+			self.Owner:SetHealth(self.Owner:Health() + 10)
 		end
         self.Owner:SetNWString("MetelMedic_Bleeding", "none")
 
         if SERVER then
             timer.Destroy("MetelMedic_BleedingTimer_"..self.Owner:SteamID64())
-			net.Start("metelmedic_disablebleedingeffect")
+			net.Start("metelmedic_togglebleeding")
+			net.WriteBool(false)
 			net.Send(self.Owner)
         end
 
@@ -75,7 +76,7 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + 1)
 end
 
-function SWEP:SecondaryAttack()
+function SWEP:PrimaryAttack()
 	local tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 96, self.Owner)
 	if !IsFirstTimePredicted() or !tr.Entity:IsPlayer() or self.Busy then return end
 	local target = tr.Entity
@@ -102,7 +103,8 @@ function SWEP:SecondaryAttack()
 
         if SERVER then
             timer.Destroy("MetelMedic_BleedingTimer_"..target:SteamID64())
-			net.Start("metelmedic_disablebleedingeffect")
+			net.Start("metelmedic_togglebleeding")
+			net.WriteBool(false)
 			net.Send(target)
         end
 
@@ -139,7 +141,7 @@ function SWEP:DrawHUD()
 	if (!target:IsPlayer()) then return end
 	
     if not target:GetNWString("MetelMedic_Bleeding") == "none" then
-		draw.SimpleText(target:Name().." is Bleeding", "Trebuchet18", ScrW() / 2 + 272, ScrH() / 2 - 28, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(target:Name().." Bleeds", "Trebuchet18", ScrW() / 2 + 272, ScrH() / 2 - 28, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 end
 

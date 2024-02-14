@@ -1,7 +1,7 @@
 SWEP.UseHands = true
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
-SWEP.Category = "MetelMedic"
+SWEP.Category = "MetelGames MedicSystem"
 SWEP.Author = "DerMetelGamerYT & Gonzo"
 SWEP.ViewModelFOV = 62
 
@@ -36,10 +36,8 @@ function SWEP:PrimaryAttack()
 	if !IsFirstTimePredicted() then return end
 	if self:GetCharge() <= 0 then return end
     local trace = self.Owner:GetEyeTrace().Entity
-	//print(trace:GetOwner())
-	//print(self.isreviving)
 	if IsValid(trace) and trace:IsRagdoll() and not self.isreviving then
-		if not timer.Exists(trace:GetOwner():SteamID().."metelmedic_deathtimer") then return end
+		if not timer.Exists(trace:GetOwner():SteamID().."_deathtimer") then return end
 		self.isreviving = true
         if self.Owner:GetPos():DistToSqr(trace:GetPos()) <= 6000 then
             self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
@@ -47,35 +45,22 @@ function SWEP:PrimaryAttack()
                 self:SetCharge(0)
                 self:EmitSound( "ambient/energy/spark"..math.random(1,5)..".wav" )
                 self:CreateEffect(self.Owner:GetShootPos(), trace.Entity)
-                    if not trace:GetNWString("metel_ragdollowner") then return end
-                    local target = trace:GetOwner()
-					if SERVER then
-						local traceragdoll = trace:GetPos()
-						target:Spawn()						
-						target:SetPos(self:FindPosition(self.Owner))		
-						target:SetHealth(target:GetMaxHealth() / 2)				
+				if not trace:GetNWString("metel_ragdollowner") then return end
+				local target = trace:GetOwner()
+				if SERVER then
+					local traceragdoll = trace:GetPos()
+					target:Spawn()						
+					target:SetPos(self:FindPosition(self.Owner))		
+					target:SetHealth(target:GetMaxHealth() / 2)
+					for k,v in pairs(target.medicdeathweapons) do
+						target:Give(v)
 					end
-					self.isreviving = false
-					
+					if timer.Exists(target:SteamID().."_nlrtimer") then timer.Remove(target:SteamID().."_nlrtimer") end
+				end
+				self.isreviving = false
             end)
 		end
-	elseif (trace:IsPlayer()) then
-		self:SetCharge(0)
-		self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-		timer.Simple(0.3, function()
-			trace.Entity:SetLocalVelocity(self.Owner:GetAimVector() * 500)
-			if SERVER then
-				local dmg = DamageInfo()
-				dmg:SetDamage(500)
-				dmg:SetDamageType(DMG_SHOCK)
-				dmg:SetAttacker(self.Owner)
-				trace.Entity:TakeDamageInfo(dmg)
-			end
-			self:CreateEffect(self.Owner:GetShootPos(), trace.Entity)
-			self:EmitSound( "ambient/energy/spark"..math.random(1,5)..".wav" )
-		end)
-		
-	else return end
+	end
 	self:SetNextSecondaryFire(CurTime() + 1)
 end
 
