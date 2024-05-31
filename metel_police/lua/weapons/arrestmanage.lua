@@ -121,6 +121,7 @@ function SWEP:PrimaryAttack()
             end
 
             acceptBTN.DoClick = function(self)
+                surface.PlaySound("ui/buttonclick.wav") 
                 net.Start("MetelPolice_ArrestPlayer")
                     net.WriteEntity(tracedPlayer)
                     net.WriteString(reasonText:GetValue())
@@ -130,3 +131,5 @@ function SWEP:PrimaryAttack()
         end
     end
 end
+
+function SWEP:SecondaryAttack() return end
