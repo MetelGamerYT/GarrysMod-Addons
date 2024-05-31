@@ -18,7 +18,10 @@ net.Receive("MetelPolice_ArrestPlayer", function(len, ply)
         DarkRP.notify(ply, 1,5, "The Player is already arrested!")
         return
     end
+    MetelPolice_ArrestPlayer(arrestedPlayer, arrestReason, arrestLenght, ply)
+end)
 
+function MetelPolice_ArrestPlayer(arrestedPlayer, arrestReason, arrestLenght, ply)
     arrestedPlayer:arrest(arrestLenght * 60, ply)
 
     timer.Create(arrestedPlayer:SteamID64().."_MetelPolice_ArrestTime", arrestLenght * 60, 1, function()
@@ -27,7 +30,7 @@ net.Receive("MetelPolice_ArrestPlayer", function(len, ply)
 
     DarkRP.notify(arrestedPlayer, 1,5, "You were arrested by "..ply:Name().." for ".. arrestLenght.." minutes!")
     DarkRP.notify(ply, 1,5, "You were arrested "..arrestedPlayer:Name().." for ".. arrestLenght.." minutes!")
-end)
+end
 
 function MetelPolice_UnjailPlayer(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
